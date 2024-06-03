@@ -49,7 +49,12 @@ export class Transmart {
           : path.resolve(localePath, targetLocale, ns)
 
         if (cacheEnabled) {
-          const pairHash = getPairHash(inputNSFilePath, outputNSFilePath)
+          // calculate the hash for the pair of input and output file, if anyone of them changed, the cache should be changed
+          // also consider using relative path to make the hash, avoid cases like different machine has different root path
+          const pairHash = getPairHash(
+            path.relative(process.cwd(), inputNSFilePath),
+            path.relative(process.cwd(), outputNSFilePath),
+          )
           const targetCachePath = path.join(cachePath, pairHash)
           // check if the cache file exists
           if (existsSync(targetCachePath) && existsSync(outputNSFilePath)) {
